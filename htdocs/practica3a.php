@@ -8,6 +8,7 @@ if (isset($_POST['btn_agrega_usuario'])) {
     fclose($archivo);
 
     echo "<div class='alert alert-success' role='alert'>Se registro correctamente el usuario.</div>";
+    fclose($archivo);
 }
 $tabla="";
 $archivo=fopen("usuarios.txt","r");
@@ -37,7 +38,12 @@ while (!feof($archivo)) {
           <input type='hidden' name='index' value='$numRow' >
           <input type='submit' name='btn_acciones' value='Modificar' class='btn btn-sm btn-info'>
           </form>
-          <input type='button' value='Eliminar' class='btn btn-sm btn-danger'>
+          <form action='' method='POST'>
+          <input type='hidden' name='usuario' value='".substr($cad, 0,$posi)."'>
+          <input type='hidden' name='password' value='".substr($cad,$posi+1, strlen($cad)-1)."'>
+          <input type='hidden' name='index' value='$numRow' >
+          <input type='submit' name='btn_acciones' value='Eliminar' class='btn btn-sm btn-danger'>
+          </form>
          </div>
       </div>";
       $numRow++;
@@ -92,7 +98,7 @@ while (!feof($archivo)) {
 
 
       case 'Eliminar':
-        # code...
+        borrar_linea($_POST['index']);
         break; 
         
         
@@ -101,6 +107,30 @@ while (!feof($archivo)) {
         break;
     }
   }
+
+  function borrar_linea($linea) {
+    echo "vamos a borrar $linea";
+    $file = get_file("usuarios.txt");
+    $nuevo_archivo = "";
+    echo "<br>";
+    for($i = 0; !feof($file); $i++) {
+      $row = fgets($file);
+      if ($i != $linea) {
+        $nuevo_archivo.= $row;
+      }
+    }
+    echo "<br>";
+    fclose($file);
+    $file = fopen("usuarios.txt","w+");
+    fwrite($file, "hola|adios");
+    fclose($file);
+    echo "el fin brother";
+  }
+  function get_file($nombre) {
+    $file = fopen($nombre, "r");
+    return $file;
+  }
+  
 ?>
 <!doctype html>
 <html lang="en">
